@@ -28,4 +28,5 @@ func InitDB() {
 	utils.Logger.Info("✅ Connected to PostgreSQL successfully!")
 
 	DB.AutoMigrate(&models.User{})
+	DB.AutoMigrate(&models.Product{})
 }
