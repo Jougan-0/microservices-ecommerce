@@ -15,7 +15,8 @@ func main() {
 	db.InitDB()
 
 	app := fiber.New()
-	routes.SetupRoutes(app)
+	routes.SetupUserRoutes(app)
+	routes.SetupCatalogRoutes(app)
 
 	utils.Logger.Info("Starting User Service on port 3001")
 	app.Listen(":3001")

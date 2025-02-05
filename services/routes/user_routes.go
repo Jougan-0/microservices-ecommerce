@@ -7,7 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func SetupRoutes(app *fiber.App) {
+func SetupUserRoutes(app *fiber.App) {
 	// Public Routes
 	app.Post("/register", handlers.RegisterUser)
 	app.Post("/login", handlers.LoginUser)
