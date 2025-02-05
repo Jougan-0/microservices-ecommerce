@@ -9,6 +9,8 @@ import (
 )
 
 func main() {
+	utils.LoadEnv()
+
 	utils.InitLogger()
 	db.InitDB()
 
