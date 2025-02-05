@@ -2,9 +2,9 @@ package services
 
 import (
 	"errors"
-	"user-service/models"
-	"user-service/repository"
-	"user-service/utils"
+	"microservices/models"
+	"microservices/repository"
+	"microservices/utils"
 
 	"github.com/sirupsen/logrus"
 )

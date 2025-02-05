@@ -1,8 +1,8 @@
 package middleware
 
 import (
+	"microservices/utils"
 	"strings"
-	"user-service/utils"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"

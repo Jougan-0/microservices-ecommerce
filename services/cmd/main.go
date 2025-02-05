@@ -1,9 +1,9 @@
 package main
 
 import (
-	"user-service/db"
-	"user-service/routes"
-	"user-service/utils"
+	"microservices/db"
+	"microservices/routes"
+	"microservices/utils"
 
 	"github.com/gofiber/fiber/v2"
 )

@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	"user-service/models"
-	"user-service/services"
-	"user-service/utils"
+	"microservices/models"
+	"microservices/services"
+	"microservices/utils"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"

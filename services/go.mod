@@ -1,4 +1,4 @@
-module user-service
+module services
 
 go 1.21.0
 

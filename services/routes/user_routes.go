@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"user-service/handlers"
-	"user-service/middleware"
+	"microservices/handlers"
+	"microservices/middleware"
 
 	"github.com/gofiber/fiber/v2"
 )

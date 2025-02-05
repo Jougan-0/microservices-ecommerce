@@ -1,9 +1,9 @@
 package repository
 
 import (
-	"user-service/db"
-	"user-service/models"
-	"user-service/utils"
+	"microservices/db"
+	"microservices/models"
+	"microservices/utils"
 
 	"github.com/sirupsen/logrus"
 )

@@ -2,8 +2,8 @@ package db
 
 import (
 	"fmt"
-	"user-service/models"
-	"user-service/utils"
+	"microservices/models"
+	"microservices/utils"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
