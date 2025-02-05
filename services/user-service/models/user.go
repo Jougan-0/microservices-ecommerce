@@ -9,3 +9,6 @@ type User struct {
 	Password  string    `gorm:"column:password_hash;not null" json:"-"`
 	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`
 }
+type UserUpdate struct {
+	Name string `json:"name"`
+}

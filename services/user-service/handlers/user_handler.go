@@ -12,7 +12,7 @@ import (
 func RegisterUser(c *fiber.Ctx) error {
 	var user models.User
 	if err := c.BodyParser(&user); err != nil {
-		utils.Logger.WithError(err).Warn("Invalid request payload")
+		utils.Logger.WithError(err).Error("Invalid request payload")
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
 
@@ -30,7 +30,7 @@ func RegisterUser(c *fiber.Ctx) error {
 func LoginUser(c *fiber.Ctx) error {
 	var user models.User
 	if err := c.BodyParser(&user); err != nil {
-		utils.Logger.WithError(err).Warn("Invalid login request")
+		utils.Logger.WithError(err).Error("Invalid login request")
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
 
@@ -38,7 +38,7 @@ func LoginUser(c *fiber.Ctx) error {
 	if err != nil {
 		utils.Logger.WithFields(logrus.Fields{
 			"email": user.Email,
-		}).Warn("User login attempt failed")
+		}).Error("User login attempt failed")
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid credentials"})
 	}
 
@@ -46,4 +46,51 @@ func LoginUser(c *fiber.Ctx) error {
 		"email": user.Email,
 	}).Info("User logged in successfully via API")
 	return c.JSON(fiber.Map{"token": token})
+}
+
+func GetUserProfile(c *fiber.Ctx) error {
+	emailValue := c.Locals("email")
+	if emailValue == nil {
+		utils.Logger.Error("❌ No email found in request context")
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
+	}
+
+	email, ok := emailValue.(string)
+	if !ok {
+		utils.Logger.Error("❌ Failed to cast email to string")
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid token payload"})
+	}
+
+	user, err := services.FetchUserProfile(email)
+	if err != nil {
+		utils.Logger.WithError(err).Error("Failed to fetch user profile")
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
+	}
+	return c.JSON(user)
+}
+
+func UpdateUserProfile(c *fiber.Ctx) error {
+	email := c.Locals("email").(string)
+	var updateData models.UserUpdate
+	if err := c.BodyParser(&updateData); err != nil {
+		utils.Logger.Error("Invalid request payload")
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
+	}
+
+	err := services.UpdateUserProfile(email, updateData)
+	if err != nil {
+		utils.Logger.WithError(err).Error("Failed to update profile")
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update profile"})
+	}
+	return c.JSON(fiber.Map{"message": "Profile updated successfully"})
+}
+
+func DeleteUserAccount(c *fiber.Ctx) error {
+	email := c.Locals("email").(string)
+	err := services.DeleteUser(email)
+	if err != nil {
+		utils.Logger.WithError(err).Error("Failed to delete account")
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to delete account"})
+	}
+	return c.JSON(fiber.Map{"message": "Account deleted successfully"})
 }

@@ -29,3 +29,12 @@ func GetUserByEmail(email string) (*models.User, error) {
 	}).Info("User fetched successfully")
 	return &user, nil
 }
+func UpdateUser(user *models.User) error {
+	err := db.DB.Save(user).Error
+	return err
+}
+
+func DeleteUser(email string) error {
+	err := db.DB.Where("email = ?", email).Delete(&models.User{}).Error
+	return err
+}

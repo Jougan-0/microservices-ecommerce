@@ -42,3 +42,33 @@ func LoginUser(email, password string) (string, error) {
 	}).Info("User logged in successfully")
 	return token, nil
 }
+func FetchUserProfile(email string) (*models.User, error) {
+	user, err := repository.GetUserByEmail(email)
+	if err != nil {
+		utils.Logger.WithFields(logrus.Fields{"email": email}).Warn("User profile not found")
+		return nil, err
+	}
+	return user, nil
+}
+
+func UpdateUserProfile(email string, updateData models.UserUpdate) error {
+	user, err := repository.GetUserByEmail(email)
+	if err != nil {
+		return errors.New("user not found")
+	}
+
+	user.Name = updateData.Name
+	err = repository.UpdateUser(user)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func DeleteUser(email string) error {
+	err := repository.DeleteUser(email)
+	if err != nil {
+		return err
+	}
+	return nil
+}
