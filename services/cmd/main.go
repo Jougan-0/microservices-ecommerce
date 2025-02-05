@@ -17,6 +17,7 @@ func main() {
 	app := fiber.New()
 	routes.SetupUserRoutes(app)
 	routes.SetupCatalogRoutes(app)
+	routes.SetupCartRoutes(app)
 
 	utils.Logger.Info("Starting User Service on port 3001")
 	app.Listen(":3001")
