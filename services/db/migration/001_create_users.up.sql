@@ -5,3 +5,5 @@ CREATE TABLE users (
     password_hash TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Not required as moved to gorm
