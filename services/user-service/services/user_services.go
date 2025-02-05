@@ -14,7 +14,6 @@ func RegisterUser(user models.User) error {
 	user.Password = hashedPassword
 	err := repository.CreateUser(&user)
 	if err != nil {
-		utils.Logger.WithError(err).Error("User registration failed")
 		return err
 	}
 	utils.Logger.WithFields(logrus.Fields{
@@ -26,22 +25,15 @@ func RegisterUser(user models.User) error {
 func LoginUser(email, password string) (string, error) {
 	storedUser, err := repository.GetUserByEmail(email)
 	if err != nil {
-		utils.Logger.WithFields(logrus.Fields{
-			"email": email,
-		}).Warn("User login failed: User not found")
 		return "", errors.New("user not found")
 	}
 
 	if !utils.CheckPasswordHash(password, storedUser.Password) {
-		utils.Logger.WithFields(logrus.Fields{
-			"email": email,
-		}).Warn("User login failed: Invalid password")
 		return "", errors.New("invalid password")
 	}
 
 	token, err := utils.GenerateJWT(storedUser.Email)
 	if err != nil {
-		utils.Logger.WithError(err).Error("Failed to generate JWT")
 		return "", err
 	}
 
