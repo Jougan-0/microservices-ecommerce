@@ -2,9 +2,9 @@ package db
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"user-service/models"
+	"user-service/utils"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
@@ -16,7 +16,7 @@ var DB *gorm.DB
 func InitDB() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		utils.Logger.Fatal("Error loading .env file")
 	}
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
@@ -29,11 +29,10 @@ func InitDB() {
 
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatalf("❌ Failed to connect to database: %v\n", err)
+		utils.Logger.Fatalf("❌ Failed to connect to database: %v", err)
 	}
 
-	fmt.Println("✅ Connected to PostgreSQL successfully!")
+	utils.Logger.Info("✅ Connected to PostgreSQL successfully!")
 
-	// Auto-migrate User table
 	DB.AutoMigrate(&models.User{})
 }
