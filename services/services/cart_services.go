@@ -2,7 +2,6 @@ package services
 
 import (
 	"errors"
-	"fmt"
 	"microservices/models"
 	"microservices/repository"
 )
@@ -18,17 +17,21 @@ func AddItemToCart(cart models.Cart) error {
 	return repository.AddToCart(&cart)
 }
 
-func GetCart(userID uint) ([]models.Cart, error) {
+func GetCart(userID uint) ([]models.CartResponse, error) {
 	cartItems, err := repository.GetUserCart(userID)
 	if err != nil {
 		return nil, err
 	}
-	var validCart []models.Cart
+	var validCart []models.CartResponse
 	for _, item := range cartItems {
-		fmt.Println("item.ProductID", item.ProductID)
 		product, err := repository.GetProductByID(item.ProductID)
 		if err == nil && product.Stock > 0 {
-			validCart = append(validCart, item)
+			validCart = append(validCart, models.CartResponse{
+				ID:          item.ID,
+				ProductName: product.Name,
+				Quantity:    item.Quantity,
+				TotalPrice:  product.Price * float64(item.Quantity),
+			})
 		}
 	}
 
@@ -39,8 +42,8 @@ func ModifyCartItem(cart models.Cart) error {
 	return repository.UpdateCartItem(&cart)
 }
 
-func DeleteCartItem(cartID uint) error {
-	return repository.RemoveCartItem(cartID)
+func DeleteCartItem(cartID uint, quantity int, userId uint) error {
+	return repository.RemoveCartItem(cartID, quantity, userId)
 }
 
 func ClearUserCart(userID uint) error {

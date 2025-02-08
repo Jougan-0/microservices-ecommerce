@@ -17,7 +17,13 @@ func AddToCart(c *fiber.Ctx) error {
 		utils.Logger.WithError(err).Warn("Invalid request payload")
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
-
+	email := c.Locals("email").(string)
+	user, err := repository.GetUserByEmail(email)
+	if err != nil {
+		utils.Logger.WithError(err).Error("Failed to fetch user")
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch user"})
+	}
+	cart.UserID = user.ID
 	if err := services.AddItemToCart(cart); err != nil {
 		utils.Logger.WithError(err).Error("Failed to add item to cart")
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to add item to cart"})
@@ -51,7 +57,15 @@ func GetCart(c *fiber.Ctx) error {
 
 func RemoveCartItem(c *fiber.Ctx) error {
 	id, _ := strconv.Atoi(c.Params("id"))
-	err := services.DeleteCartItem(uint(id))
+	quantity, _ := strconv.Atoi(c.Query("quantity"))
+	email := c.Locals("email").(string)
+	//extra security
+	user, err := repository.GetUserByEmail(email)
+	if err != nil {
+		utils.Logger.WithError(err).Error("Failed to fetch user")
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch user"})
+	}
+	err = services.DeleteCartItem(uint(id), int(quantity), user.ID)
 	if err != nil {
 		utils.Logger.WithError(err).Error("Failed to remove item from cart")
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to remove item"})
@@ -62,13 +76,18 @@ func RemoveCartItem(c *fiber.Ctx) error {
 }
 
 func ClearCart(c *fiber.Ctx) error {
-	userID := c.Locals("user_id").(uint)
-	err := services.ClearUserCart(userID)
+	email := c.Locals("email").(string)
+	user, err := repository.GetUserByEmail(email)
+	if err != nil {
+		utils.Logger.WithError(err).Error("Failed to fetch user")
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch user"})
+	}
+	err = services.ClearUserCart(user.ID)
 	if err != nil {
 		utils.Logger.WithError(err).Error("Failed to clear cart")
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to clear cart"})
 	}
 
-	utils.Logger.WithField("user_id", userID).Info("Cart cleared successfully")
+	utils.Logger.WithField("user_id", user.ID).Info("Cart cleared successfully")
 	return c.JSON(fiber.Map{"message": "Cart cleared"})
 }

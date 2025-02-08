@@ -9,3 +9,9 @@ type Cart struct {
 	Quantity  int       `gorm:"not null" json:"quantity"`
 	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`
 }
+type CartResponse struct {
+	ID          uint    `json:"id"`
+	ProductName string  `json:"product_name"`
+	Quantity    int     `json:"quantity"`
+	TotalPrice  float64 `json:"total_price"`
+}
