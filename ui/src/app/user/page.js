@@ -1,82 +1,90 @@
 "use client";
 
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, Suspense } from "react";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import { JwtContext } from "../JwtContext";
 
-const userAPIs = [
-  {
-    name: "Register",
-    method: "POST",
-    path: "/register",
-    description: "Registers a new user.",
-    requestBody: `{
+export default function UserDocsWrapper() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <UserDocs />
+    </Suspense>
+  );
+}
+
+function UserDocs() {
+  const { jwtToken, updateJwtToken } = useContext(JwtContext);
+  const searchParams = useSearchParams();
+  const loginSelected = searchParams.get("login") === "true";
+
+  const userAPIs = [
+    {
+      name: "Register",
+      method: "POST",
+      path: "/register",
+      description: "Registers a new user.",
+      requestBody: `{
   "name": "John Doe",
   "email": "john@example.com",
   "password": "securepassword"
 }`,
-    exampleResponse: `{
+      exampleResponse: `{
   "message": "User registered successfully"
 }`,
-    requiresAuth: false,
-  },
-  {
-    name: "Login",
-    method: "POST",
-    path: "/login",
-    description: "Authenticates a user and returns a JWT token.",
-    requestBody: `{
+      requiresAuth: false,
+    },
+    {
+      name: "Login",
+      method: "POST",
+      path: "/login",
+      description: "Authenticates a user and returns a JWT token.",
+      requestBody: `{
   "email": "john@example.com",
   "password": "securepassword"
 }`,
-    exampleResponse: `{
+      exampleResponse: `{
   "token": "eyJhbGciOiJIUzI1NiIsInR5c..."
 }`,
-    requiresAuth: false,
-  },
-  {
-    name: "Get User Profile",
-    method: "GET",
-    path: "/user/profile",
-    description: "Fetches the logged-in user's profile.",
-    exampleResponse: `{
+      requiresAuth: false,
+    },
+    {
+      name: "Get User Profile",
+      method: "GET",
+      path: "/user/profile",
+      description: "Fetches the logged-in user's profile.",
+      exampleResponse: `{
   "id": 1,
   "name": "John Doe",
   "email": "john@example.com",
   "created_at": "2025-02-09T12:30:00Z"
 }`,
-    requiresAuth: true,
-  },
-  {
-    name: "Update Profile",
-    method: "PUT",
-    path: "/user/update-profile",
-    description: "Updates the logged-in user's profile.",
-    requestBody: `{
+      requiresAuth: true,
+    },
+    {
+      name: "Update Profile",
+      method: "PUT",
+      path: "/user/update-profile",
+      description: "Updates the logged-in user's profile.",
+      requestBody: `{
   "name": "John Updated"
 }`,
-    exampleResponse: `{
+      exampleResponse: `{
   "message": "Profile updated successfully"
 }`,
-    requiresAuth: true,
-  },
-  {
-    name: "Delete Account",
-    method: "DELETE",
-    path: "/user/delete-account",
-    description: "Deletes the user's account permanently.",
-    exampleResponse: `{
+      requiresAuth: true,
+    },
+    {
+      name: "Delete Account",
+      method: "DELETE",
+      path: "/user/delete-account",
+      description: "Deletes the user's account permanently.",
+      exampleResponse: `{
   "message": "Account deleted successfully"
 }`,
-    requiresAuth: true,
-  },
-];
-
-export default function UserDocs() {
-  const { jwtToken, updateJwtToken } = useContext(JwtContext);
-  const searchParams = useSearchParams();
-  const loginSelected = searchParams.get("login") === "true";
+      requiresAuth: true,
+    },
+  ];
 
   const [selectedAPI, setSelectedAPI] = useState(
     loginSelected ? userAPIs[1] : userAPIs[0]
@@ -85,12 +93,14 @@ export default function UserDocs() {
     selectedAPI.requestBody || "{}"
   );
   const [response, setResponse] = useState(null);
+
   useEffect(() => {
     if (loginSelected) {
       setSelectedAPI(userAPIs[1]);
       setRequestBody(userAPIs[1].requestBody || "{}");
     }
   }, [loginSelected]);
+
   const handleRequest = async () => {
     try {
       const config = {
