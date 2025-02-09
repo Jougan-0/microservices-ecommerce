@@ -1,1 +1,10 @@
 **/.env
+ui/node_modules
+.pnp
+.pnp.*
+.yarn/*
+
+ui/.next/
+ui/out/
+ui/build
+

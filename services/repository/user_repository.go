@@ -1,20 +1,24 @@
 package repository
 
 import (
+	"errors"
 	"microservices/db"
 	"microservices/models"
 	"microservices/utils"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 )
 
+var ErrDuplicateEmail = errors.New("email already exists")
+
 func CreateUser(user *models.User) error {
 	if err := db.DB.Create(user).Error; err != nil {
+		if strings.Contains(err.Error(), "SQLSTATE 23505") {
+			return ErrDuplicateEmail
+		}
 		return err
 	}
-	utils.Logger.WithFields(logrus.Fields{
-		"email": user.Email,
-	}).Info("User created successfully")
 	return nil
 }
 

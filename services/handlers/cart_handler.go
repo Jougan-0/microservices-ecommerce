@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -52,11 +53,13 @@ func GetCart(c *fiber.Ctx) error {
 	}
 
 	utils.Logger.WithField("user_id", user.ID).Info("Fetched cart successfully")
+	if len(cart) == 0 {
+		return c.JSON(fiber.Map{"message": "Cart is empty"})
+	}
 	return c.JSON(cart)
 }
 
 func RemoveCartItem(c *fiber.Ctx) error {
-	id, _ := strconv.Atoi(c.Params("id"))
 	quantity, _ := strconv.Atoi(c.Query("quantity"))
 	email := c.Locals("email").(string)
 	//extra security
@@ -65,13 +68,14 @@ func RemoveCartItem(c *fiber.Ctx) error {
 		utils.Logger.WithError(err).Error("Failed to fetch user")
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch user"})
 	}
-	err = services.DeleteCartItem(uint(id), int(quantity), user.ID)
+	cartId, _ := uuid.FromString(c.Params("id"))
+	err = services.DeleteCartItem(cartId, int(quantity), user.ID)
 	if err != nil {
 		utils.Logger.WithError(err).Error("Failed to remove item from cart")
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to remove item"})
 	}
 
-	utils.Logger.WithField("cart_id", id).Info("Item removed from cart")
+	utils.Logger.WithField("cart_id", cartId).Info("Item removed from cart")
 	return c.JSON(fiber.Map{"message": "Item removed from cart"})
 }
 

@@ -3,6 +3,8 @@ package repository
 import (
 	"microservices/db"
 	"microservices/models"
+
+	"github.com/gofrs/uuid"
 )
 
 func CreateProduct(product *models.Product) error {
@@ -15,7 +17,7 @@ func GetAllProducts() ([]models.Product, error) {
 	return products, err
 }
 
-func GetProductByID(id uint) (models.Product, error) {
+func GetProductByID(id uuid.UUID) (models.Product, error) {
 	var product models.Product
 	err := db.DB.First(&product, id).Error
 	return product, err
@@ -25,6 +27,6 @@ func UpdateProduct(product *models.Product) error {
 	return db.DB.Save(product).Error
 }
 
-func DeleteProduct(id uint) error {
+func DeleteProduct(id uuid.UUID) error {
 	return db.DB.Delete(&models.Product{}, id).Error
 }
