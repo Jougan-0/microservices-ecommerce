@@ -5,6 +5,7 @@ import (
 	"microservices/services"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofrs/uuid"
 )
 
 func CreateProduct(c *fiber.Ctx) error {
@@ -12,12 +13,19 @@ func CreateProduct(c *fiber.Ctx) error {
 	if err := c.BodyParser(&product); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
-
+	id, err := uuid.NewV4()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Product creation failed"})
+	}
+	product.ID = id
 	if err := services.AddProduct(product); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Product creation failed"})
 	}
 
-	return c.JSON(fiber.Map{"message": "Product added successfully"})
+	return c.JSON(fiber.Map{
+		"message": "Product added successfully",
+		"product": product,
+	})
 }
 
 func GetProducts(c *fiber.Ctx) error {
@@ -29,8 +37,9 @@ func GetProducts(c *fiber.Ctx) error {
 	return c.JSON(products)
 }
 func UpdateProduct(c *fiber.Ctx) error {
-	id, _ := c.ParamsInt("id")
-	product, err := services.FindProduct(uint(id))
+	productId, _ := uuid.FromString(c.Params("id"))
+
+	product, err := services.FindProduct(productId)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Product not found"})
 	}
@@ -59,8 +68,8 @@ func UpdateProduct(c *fiber.Ctx) error {
 }
 
 func DeleteProduct(c *fiber.Ctx) error {
-	id, _ := c.ParamsInt("id")
-	err := services.RemoveProduct(uint(id))
+	productId, _ := uuid.FromString(c.Params("id"))
+	err := services.RemoveProduct(productId)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Product deletion failed"})
 	}
@@ -68,8 +77,8 @@ func DeleteProduct(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"message": "Product deleted successfully"})
 }
 func GetProductByID(c *fiber.Ctx) error {
-	id, _ := c.ParamsInt("id")
-	product, err := services.FindProduct(uint(id))
+	productId, _ := uuid.FromString(c.Params("id"))
+	product, err := services.FindProduct(productId)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Product not found"})
 	}

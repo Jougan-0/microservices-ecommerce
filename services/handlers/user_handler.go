@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"microservices/models"
+	"microservices/repository"
 	"microservices/services"
 	"microservices/utils"
 
@@ -12,18 +13,19 @@ import (
 func RegisterUser(c *fiber.Ctx) error {
 	var user models.User
 	if err := c.BodyParser(&user); err != nil {
-		utils.Logger.WithError(err).Error("Invalid request payload")
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
 
-	if err := services.RegisterUser(user); err != nil {
-		utils.Logger.WithError(err).Error("User registration failed")
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "User registration failed"})
+	err := services.RegisterUser(user)
+	if err != nil {
+		// Check if the error is due to duplicate email
+		if err == repository.ErrDuplicateEmail {
+			return c.Status(fiber.StatusConflict).JSON(fiber.Map{"error": "Email already exists"})
+		}
+		// Other internal server errors
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	utils.Logger.WithFields(logrus.Fields{
-		"email": user.Email,
-	}).Info("User registered successfully via API")
 	return c.JSON(fiber.Map{"message": "User registered successfully"})
 }
 
