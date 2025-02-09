@@ -55,11 +55,7 @@ export default function RootLayout({ children }) {
               </aside>
             )}
 
-            <main
-              className={`p-6 ${
-                showSidebar ? "w-3/4" : "w-full"
-              } flex justify-center items-center`}
-            >
+            <main className={`p-6 ${showSidebar ? "w-3/4" : "w-full"}`}>
               {children}
             </main>
           </div>
