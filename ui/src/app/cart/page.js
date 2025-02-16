@@ -82,7 +82,7 @@ export default function CartDocs() {
 
   const handleRequest = async () => {
     try {
-      const baseURL = process.env.REACT_APP_API_URL || "http://localhost:3001";
+      const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
       let url = `${baseURL}${selectedAPI.path}`;
 
       if (url.includes(":id")) {
