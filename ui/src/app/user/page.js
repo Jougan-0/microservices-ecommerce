@@ -103,9 +103,10 @@ function UserDocs() {
 
   const handleRequest = async () => {
     try {
+      const baseURL = process.env.REACT_APP_API_URL || "http://localhost:3001";
       const config = {
         method: selectedAPI.method,
-        url: `http://localhost:3001${selectedAPI.path}`,
+        url: `${baseURL}${selectedAPI.path}`,
         headers: {
           "Content-Type": "application/json",
           ...(selectedAPI.requiresAuth && jwtToken

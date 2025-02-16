@@ -105,9 +105,10 @@ export default function CatalogDocs() {
 
   const handleRequest = async () => {
     try {
+      const baseURL = process.env.REACT_APP_API_URL || "http://localhost:3001";
       const config = {
         method: selectedAPI.method,
-        url: `http://localhost:3001${selectedAPI.path.replace(
+        url: `${baseURL}${selectedAPI.path.replace(
           ":id",
           productId || "1"
         )}`,
