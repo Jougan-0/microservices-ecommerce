@@ -18,11 +18,11 @@ services:
       timeout: 5s
       retries: 5
 
-
   backend:
-    build:
-      context: ./services  
-      dockerfile: Dockerfile
+    # build:  # for local deploy
+    #   context: ./services  
+    #   dockerfile: Dockerfile
+    image: shlok08/services:v2
     restart: always
     depends_on:
       db : 
@@ -33,9 +33,10 @@ services:
       - "3001:3001"
 
   frontend:
-    build:
-      context: ui
-      dockerfile: Dockerfile
+    # build:   # for local deploy
+    #   context: ui
+    #   dockerfile: Dockerfile
+    image: shlok08/commerceapiui:latest
     restart: always
     depends_on:
       - backend
