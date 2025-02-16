@@ -1,0 +1,4 @@
+apiVersion: v2
+name: microservices-ecommerce
+description: A Helm chart for Kubernetes microservices-ecommerce
+version: 0.1.0
