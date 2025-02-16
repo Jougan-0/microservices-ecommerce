@@ -18,6 +18,6 @@ COPY --from=builder /app/backend .
 
 ENV BUILD_TYPE=dockerfile
 
-EXPOSE 8080
+EXPOSE 3001
 
 CMD ["./backend"]
