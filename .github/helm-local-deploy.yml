@@ -1,0 +1,60 @@
+name: Local Helm Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      helm_version:
+        description: 'Helm Chart Version'
+        required: true
+        default: 'v1.0.0'
+      ingress_host:
+        description: 'Ingress Host (e.g., myapp.local)'
+        required: true
+      db_user:
+        description: 'Database Username'
+        required: true
+      db_password:
+        description: 'Database Password'
+        required: true
+      jwt_secret:
+        description: 'JWT Secret Key'
+        required: true
+
+jobs:
+  local-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: latest
+
+      - name: Create values.yaml from Template
+        run: |
+          cat <<EOF > helm/values.yaml
+          backend:
+            image: shlok08/services
+            tag: v2
+            replicas: 1
+          frontend:
+            image: shlok08/commerceapiui
+            tag: latest
+            replicas: 1
+          db:
+            image: postgres
+            tag: latest
+            storage: 1Gi
+          ingress:
+            host: ${{ github.event.inputs.ingress_host }}
+          secrets:
+            dbUser: ${{ github.event.inputs.db_user }}
+            dbPassword: ${{ github.event.inputs.db_password }}
+            jwtSecret: ${{ github.event.inputs.jwt_secret }}
+          EOF
+
+      - name: Deploy Helm Chart Locally
+        run: |
+          helm install microservices-ecommerce oci://registry-1.docker.io/${{ secrets.DOCKER_USERNAME }}/microservices-ecommerce --version ${{ github.event.inputs.helm_version }} -f helm/values.yaml

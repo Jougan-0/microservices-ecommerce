@@ -1,4 +1,4 @@
-name: Docker Build and Push on Release
+name: Docker Build, Push, and Helm Deploy on Release
 
 on:
   release:
@@ -7,7 +7,6 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -24,11 +23,40 @@ jobs:
       - name: Build and Push Services Image
         run: |
           cd services
-          docker build -t shlok08/services:v2 -f Dockerfile .
-          docker push shlok08/services:v2
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/services:v2 -f Dockerfile .
+          docker push ${{ secrets.DOCKER_USERNAME }}/services:v2
 
       - name: Build and Push UI Image
         run: |
           cd ui
-          docker build -t shlok08/commerceapiui:latest -f Dockerfile .
-          docker push shlok08/commerceapiui:latest
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/commerceapiui:latest -f Dockerfile .
+          docker push ${{ secrets.DOCKER_USERNAME }}/commerceapiui:latest
+
+  helm-deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: latest
+        env:
+          BACKEND_TAG: v2
+          FRONTEND_TAG: latest
+          INGRESS_HOST: ${{ secrets.INGRESS_HOST }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
+      - name: Package Helm Chart
+        run: |
+              helm package helm/ -d ./charts --version ${{ github.event.release.tag_name }}
+          
+      - name: Push Helm Chart to Docker Hub
+        run: |
+              helm registry login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} registry-1.docker.io
+              helm push ./charts/microservices-ecommerce-${{ github.event.release.tag_name }}.tgz oci://registry-1.docker.io/${{ secrets.DOCKER_USERNAME }}
+        

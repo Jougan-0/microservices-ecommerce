@@ -1,0 +1,22 @@
+backend:
+  image: shlok08/services
+  tag: {{ .BACKEND_TAG }}
+  replicas: 1
+
+frontend:
+  image: shlok08/commerceapiui
+  tag: {{ .FRONTEND_TAG }}
+  replicas: 1
+
+db:
+  image: postgres
+  tag: latest
+  storage: 1Gi
+
+ingress:
+  host: {{ .INGRESS_HOST }}
+
+secrets:
+  dbUser: {{ .DB_USER }}
+  dbPassword: {{ .DB_PASSWORD }}
+  jwtSecret: {{ .JWT_SECRET }}

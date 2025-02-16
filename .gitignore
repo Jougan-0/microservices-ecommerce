@@ -7,4 +7,4 @@ ui/node_modules
 ui/.next/
 ui/out/
 ui/build
-
+helm/values.yaml
