@@ -46,10 +46,6 @@ jobs:
         env:
           BACKEND_TAG: v2
           FRONTEND_TAG: latest
-          INGRESS_HOST: ${{ secrets.INGRESS_HOST }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
       - name: Package Helm Chart
         run: |
