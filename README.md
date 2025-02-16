@@ -30,7 +30,7 @@ On new release a fresh image of ui and services is pushed to docker hub and char
 ## 🔐 Authentication
 - **JWT-based authentication** stored in local storage.
 - Middleware protects routes requiring authentication.
-- OpenAPI schema not used due to JWT token management.
+- OpenAPI schema or swagger not used due to UI.
 
 ---
 
