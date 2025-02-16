@@ -14,10 +14,11 @@ On new release a fresh image of ui and services is pushed to docker hub and char
 ## 🔄 CI/CD Pipeline
 - Builds and pushes Docker images to Docker Hub.
 - Generates and pushes Helm charts.
-- Auto-deploys the latest build to Kubernetes.
+- Auto-deploys the latest build.
 
 ---
-
+![plot](github-assets/dashboard.png)
+![plot](github-assets/registration.png)
 ## 🧱 Project Structure
 - **services/** – Golang microservices (Cart, Catalog, User)
 - **ui/** – Next.js frontend
