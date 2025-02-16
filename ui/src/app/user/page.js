@@ -104,7 +104,6 @@ function UserDocs() {
   const handleRequest = async () => {
     try {
       const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-      console.log(baseURL)
       const config = {
         method: selectedAPI.method,
         url: `${baseURL}${selectedAPI.path}`,
