@@ -8,10 +8,6 @@ import (
 )
 
 func LoadEnv() {
-	if os.Getenv("BUILD_TYPE") == "dockerfile" {
-		fmt.Println("🔸 Detected Docker build environment; skipping .env load.")
-		return
-	}
 	err := godotenv.Load()
 	if err != nil {
 		fmt.Println("❌ Error loading .env file. Using system environment variables.")

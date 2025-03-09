@@ -18,7 +18,7 @@ func InitDB() {
 		utils.GetEnv("DB_USER", "user"),
 		utils.GetEnv("DB_PASSWORD", "admin"),
 		utils.GetEnv("DB_NAME", "pgsql"),
-		utils.GetEnv("DB_PORT", "5431"),
+		utils.GetEnv("DB_PORT", "5432"),
 	)
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
