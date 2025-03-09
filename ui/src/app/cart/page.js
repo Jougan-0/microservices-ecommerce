@@ -60,7 +60,13 @@ export default function CartDocs() {
     selectedAPI.requestBody || "{}"
   );
   const [response, setResponse] = useState(null);
+  const [backendUrl, setBackendUrl] = useState('');
 
+  useEffect(() => {
+    fetch('/api/config')
+      .then(res => res.json())
+      .then(data => setBackendUrl(data.backendUrl));
+  }, []);
   const [jwtToken, setJwtToken] = useState(() => {
     return typeof window !== "undefined"
       ? localStorage.getItem("jwtToken") || ""
@@ -82,7 +88,7 @@ export default function CartDocs() {
 
   const handleRequest = async () => {
     try {
-      const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+      const baseURL = backendUrl;
       let url = `${baseURL}${selectedAPI.path}`;
 
       if (url.includes(":id")) {

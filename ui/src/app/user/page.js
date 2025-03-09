@@ -93,7 +93,13 @@ function UserDocs() {
     selectedAPI.requestBody || "{}"
   );
   const [response, setResponse] = useState(null);
+  const [backendUrl, setBackendUrl] = useState('');
 
+  useEffect(() => {
+    fetch('/api/config')
+      .then(res => res.json())
+      .then(data => setBackendUrl(data.backendUrl));
+  }, []);
   useEffect(() => {
     if (loginSelected) {
       setSelectedAPI(userAPIs[1]);
@@ -103,7 +109,7 @@ function UserDocs() {
 
   const handleRequest = async () => {
     try {
-      const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+      const baseURL = backendUrl;
       const config = {
         method: selectedAPI.method,
         url: `${baseURL}${selectedAPI.path}`,
