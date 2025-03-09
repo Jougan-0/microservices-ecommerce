@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+# UI for Microservices Ecommerce
 
-First, run the development server:
+This document provides details on the **UI component** of the Microservices Ecommerce project, including how JWT tokens are managed and steps to run the UI locally.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## **JWT Token Management**
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+- Once a user logs in, a **JWT token** is generated and stored securely in the browser's `localStorage`.
+- This token is automatically retrieved and added to API requests where authentication is required, ensuring seamless communication with backend services.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## **How to Run the UI Locally**
 
-To learn more about Next.js, take a look at the following resources:
+### **Prerequisites**
+- **Node.js** installed (version 18 or later).
+- **Docker and Kubernetes** if you are running the backend via Kubernetes.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### **Steps to Run the UI**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/yourusername/microservices-ecommerce.git
+   cd microservices-ecommerce/ui
+   ```
 
-## Deploy on Vercel
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. **Start the UI locally**:
+   ```bash
+   npm start
+   ```
+   The UI will be available at `http://localhost:3000`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## **Accessing the UI After Kubernetes Deployment**
+- If you have deployed the backend using Kubernetes, use the following command to expose the backend API locally:
+  ```bash
+  kubectl port-forward svc/backend 3001:80 -n commerce
+  ```
+- Then, start the UI as mentioned above.
+
+---
+
+## **Notes**
+- Ensure the backend is running (either locally or on Kubernetes) before starting the UI.
+- The JWT token once generated is automatically stored and used in subsequent API calls.
+
+This `README.md` ensures that developers can easily run the UI, understand how tokens are managed, and interact with the backend securely.
+
