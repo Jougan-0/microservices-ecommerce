@@ -1,4 +1,4 @@
-# 🛒 Microservices E-commerce App
+# 🛒 Microservices E-commerce
 A scalable E-commerce platform built with **Golang**, **Next.js**, **PostgreSQL**, and deployed using **Docker**, **Kubernetes**, and **Helm**.
 On new release a fresh image of ui and services is pushed to docker hub and chart is updated too.
 
